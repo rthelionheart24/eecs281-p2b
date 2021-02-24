@@ -23,18 +23,18 @@ public:
     // Runtime: O(1)
     explicit SortedPQ(COMP_FUNCTOR comp = COMP_FUNCTOR()) : BaseClass{comp}
     {
-        // TODO: Implement this function
 
     } // SortedPQ
 
     // Description: Construct a heap out of an iterator range with an optional
     //              comparison functor.
     // Runtime: O(n log n) where n is number of elements in range.
-    // TODO: When you implement this function, uncomment the parameter names.
     template <typename InputIterator>
-    SortedPQ(InputIterator /*start*/, InputIterator /*end*/, COMP_FUNCTOR comp = COMP_FUNCTOR()) : BaseClass{comp}
+    SortedPQ(InputIterator start, InputIterator end, COMP_FUNCTOR comp = COMP_FUNCTOR())
+        : BaseClass{comp}, data{start, end}
     {
-        // TODO: Implement this function
+        updatePriorities();
+
     } // SortedPQ
 
     // Description: Destructor doesn't need any code, the data vector will
@@ -45,10 +45,12 @@ public:
 
     // Description: Add a new element to the heap.
     // Runtime: O(n)
-    // TODO: When you implement this function, uncomment the parameter names.
-    virtual void push(const TYPE & /*val*/)
+
+    virtual void push(const TYPE &val)
     {
-        // TODO: Implement this function
+
+        auto it = std::upper_bound(data.begin(), data.end(), val);
+        data.insert(it, val);
     } // push()
 
     // Description: Remove the most extreme (defined by 'compare') element from
@@ -59,7 +61,7 @@ public:
     // Runtime: Amortized O(1)
     virtual void pop()
     {
-        // TODO: Implement this function
+        data.pop_back();
     } // pop()
 
     // Description: Return the most extreme (defined by 'compare') element of
@@ -69,12 +71,8 @@ public:
     // Runtime: O(1)
     virtual const TYPE &top() const
     {
-        // TODO: Implement this function
-
-        // These lines are present only so that this provided file compiles.
-        static TYPE temp; // TODO: Delete this line
-        return temp;      // TODO: Delete or change this line
-    }                     // top()
+        return data.back();
+    } // top()
 
     // Description: Get the number of elements in the heap.
     //              This has been implemented for you.
@@ -97,7 +95,7 @@ public:
     // Runtime: O(n log n)
     virtual void updatePriorities()
     {
-        // TODO: Implement this function
+        std::sort(data.begin(), data.end(), this->compare);
     } // updatePriorities()
 
 private:
