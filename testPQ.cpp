@@ -107,6 +107,7 @@ void testUpdatePrioritiesHelper(Eecs281PQ<int *, IntPtrComp> *pq)
 {
     vector<int> data;
     data.reserve(100);
+    data.push_back(86);
     data.push_back(1);
     data.push_back(5);
     data.push_back(31);
@@ -114,10 +115,6 @@ void testUpdatePrioritiesHelper(Eecs281PQ<int *, IntPtrComp> *pq)
     data.push_back(22);
     data.push_back(56);
     data.push_back(12);
-    data.push_back(86);
-    data.push_back(133);
-    data.push_back(122);
-    data.push_back(76);
 
     // NOTE: If you add more data to the vector, don't push the pointers
     // until AFTER the vector stops changing size!  Think about why.
@@ -131,7 +128,7 @@ void testUpdatePrioritiesHelper(Eecs281PQ<int *, IntPtrComp> *pq)
     // Change the first value (which is pointed to by the pq), and check it.
     data[0] = 10;
     pq->updatePriorities();
-    assert(*pq->top() == 133);
+    assert(*pq->top() == 56);
     cout << "updatePriority succeeded!\n";
 } // testUpdatePrioritiesHelper()
 

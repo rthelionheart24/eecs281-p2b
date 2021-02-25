@@ -19,7 +19,6 @@ public:
     // Runtime: O(1)
     explicit BinaryPQ(COMP_FUNCTOR comp = COMP_FUNCTOR()) : BaseClass{comp}
     {
-        data.resize(1);
     } // BinaryPQ
 
     // Description: Construct a heap out of an iterator range with an optional
@@ -27,7 +26,7 @@ public:
     // Runtime: O(n) where n is number of elements in range.
     template <typename InputIterator>
     BinaryPQ(InputIterator start, InputIterator end, COMP_FUNCTOR comp = COMP_FUNCTOR())
-        : BaseClass{comp}, data{start - 1, end}
+        : BaseClass{comp}, data{start, end}
     {
         updatePriorities();
 
@@ -44,10 +43,12 @@ public:
     // Runtime: O(n)
     virtual void updatePriorities()
     {
-        size_t i = 1;
-        while (i <= size())
+        std::size_t i = 0;
+        while (i < size())
         {
-            fixDown(i++);
+
+            fixUp(i);
+            i++;
         }
 
     } // updatePriorities()
@@ -57,7 +58,7 @@ public:
     virtual void push(const TYPE &val)
     {
         data.push_back(val);
-        fixUp(size());
+        fixUp(size() - 1);
     } // push()
 
     // Description: Remove the most extreme (defined by 'compare') element from
@@ -68,10 +69,10 @@ public:
     // Runtime: O(log(n))
     virtual void pop()
     {
-        data[1] = data.back();
+        data[0] = data.back();
         data.pop_back();
         if (!empty())
-            fixDown(1);
+            fixDown(0);
     } // pop()
 
     // Description: Return the most extreme (defined by 'compare') element of
@@ -81,7 +82,7 @@ public:
     // Runtime: O(1)
     virtual const TYPE &top() const
     {
-        return data[1];
+        return data[0];
 
     } // top()
 
@@ -89,14 +90,14 @@ public:
     // Runtime: O(1)
     virtual std::size_t size() const
     {
-        return data.size() - 1;
+        return data.size();
     } // size()
 
     // Description: Return true if the heap is empty.
     // Runtime: O(1)
     virtual bool empty() const
     {
-        return (data.size() == 1);
+        return (data.size() == 0);
     } // empty()
 
 private:
@@ -106,22 +107,22 @@ private:
     // TODO: Add any additional member functions or data you require here.
     // For instance, you might add fixUp() and fixDown().
 
-    void fixUp(size_t k)
+    void fixUp(std::size_t k)
     {
-        while (k > 1 && this->compare(data[k / 2], data[k]))
+        while (k > 0 && this->compare(data[(k - 1) / 2], data[k]))
         {
-            std::swap(data[k], data[k / 2]);
+            std::swap(data[(k - 1) / 2], data[k]);
             k /= 2;
         }
     }
 
-    void fixDown(size_t k)
+    void fixDown(std::size_t k)
     {
 
-        while (2 * k <= size())
+        while (2 * k + 1 <= size() - 1)
         {
-            size_t j = 2 * k;
-            if (j < size() && this->compare(data[j], data[j + 1]))
+            std::size_t j = 2 * k + 1;
+            if (j < size() - 1 && this->compare(data[j], data[j + 1]))
                 j++;
             if (this->compare(data[j], data[k]))
                 break;
@@ -129,6 +130,14 @@ private:
             std::swap(data[k], data[j]);
             k = j;
         }
+    }
+    TYPE &getElement(std::size_t i)
+    {
+        return data[i - 1];
+    }
+    const TYPE &getElement(std::size_t i) const
+    {
+        return data[i - 1];
     }
 
 }; // BinaryPQ
