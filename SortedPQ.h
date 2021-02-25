@@ -6,6 +6,7 @@
 #include "Eecs281PQ.h"
 #include <algorithm>
 #include <iostream>
+#include <utility>
 
 // A specialized version of the 'heap' ADT that is implemented with an
 // underlying sorted array-based container.
@@ -49,7 +50,7 @@ public:
     virtual void push(const TYPE &val)
     {
 
-        auto it = std::upper_bound(data.begin(), data.end(), val);
+        auto it = std::upper_bound(data.begin(), data.end(), val, this->compare);
         data.insert(it, val);
     } // push()
 

@@ -35,72 +35,132 @@
 
 using namespace std;
 
-
 // Used to test a priority queue containing pointers to integers.
-struct IntPtrComp {
-    bool operator() (const int *a, const int *b) const {
+struct IntPtrComp
+{
+    bool operator()(const int *a, const int *b) const
+    {
         return *a < *b;
     }
 };
-
 
 // TODO: Make sure that you're using this-compare() properly, and everywhere
 // that you should.  Complete this function by adding a functor that compares
 // two HiddenData structures, create a PQ of the specified type, and call
 // this function from main().
-void testHiddenData(const string &pqType) {
-    struct HiddenData {
+void testHiddenData(const string &pqType)
+{
+    struct HiddenData
+    {
         int data;
     };
-    struct HiddenDataComp {
-        bool operator()(const HiddenData &/*a*/, const HiddenData &/*b*/) const {
-            // TODO: Finish this functor; when you do, uncomment the
-            // parameters in the line above
-            return false;
+    struct HiddenDataComp
+    {
+        bool operator()(const HiddenData &a, const HiddenData &b) const
+        {
+            return a.data < b.data;
         }
     };
 
     cout << "Testing " << pqType << " with hidden data" << endl;
 
     // TODO: Add code here to actually test with the HiddenData type.
-} // testHiddenData()
 
+    Eecs281PQ<HiddenData, HiddenDataComp> *pq = nullptr;
+    cout << "Testing HiddenDataComp() on " << pqType << endl;
+
+    if (pqType == "Unordered")
+    {
+        pq = new UnorderedPQ<HiddenData, HiddenDataComp>;
+    } // if
+    else if (pqType == "Sorted")
+    {
+        pq = new SortedPQ<HiddenData, HiddenDataComp>;
+    }
+    else if (pqType == "Binary")
+    {
+        pq = new BinaryPQ<HiddenData, HiddenDataComp>;
+    }
+    else if (pqType == "Pairing")
+    {
+        pq = new PairingPQ<HiddenData, HiddenDataComp>;
+    }
+
+    pq->push({21});
+    pq->push({23});
+    assert(pq->size() == 2);
+    assert(pq->top().data == 23);
+
+    pq->push({100});
+    assert(pq->size() == 3);
+    assert(pq->top().data == 100);
+
+    cout << "HiddenDataComp() succeeded" << endl;
+
+    delete pq;
+
+} // testHiddenData()
 
 // TODO: Add more code to this function to test if updatePriorities()
 // is working properly.
-void testUpdatePrioritiesHelper(Eecs281PQ<int *, IntPtrComp> *pq) {
+void testUpdatePrioritiesHelper(Eecs281PQ<int *, IntPtrComp> *pq)
+{
     vector<int> data;
     data.reserve(100);
     data.push_back(1);
     data.push_back(5);
+    data.push_back(31);
+    data.push_back(5);
+    data.push_back(22);
+    data.push_back(56);
+    data.push_back(12);
+    data.push_back(86);
+    data.push_back(133);
+    data.push_back(122);
+    data.push_back(76);
 
     // NOTE: If you add more data to the vector, don't push the pointers
     // until AFTER the vector stops changing size!  Think about why.
     // You can add up to 100 values, or change the reserve if you want more.
 
-    for (size_t i = 0; i < data.size(); ++i) {
+    for (size_t i = 0; i < data.size(); ++i)
+    {
         pq->push(&data[i]);
     } // for
 
     // Change the first value (which is pointed to by the pq), and check it.
     data[0] = 10;
     pq->updatePriorities();
-    assert(*pq->top() == 10);
+    assert(*pq->top() == 133);
+    cout << "updatePriority succeeded!\n";
 } // testUpdatePrioritiesHelper()
-
 
 // TODO: Add more code to this function to test if updatePriorities()
 // is working properly.
-void testUpdatePriorities(const string &pqType) {
+void testUpdatePriorities(const string &pqType)
+{
     Eecs281PQ<int *, IntPtrComp> *pq = nullptr;
     cout << "Testing updatePriorities() on " << pqType << endl;
 
-    if (pqType == "Unordered") {
+    if (pqType == "Unordered")
+    {
         pq = new UnorderedPQ<int *, IntPtrComp>;
     } // if
-    // TODO: Add more types here inside 'else if' statements, like in main().
+    else if (pqType == "Sorted")
+    {
+        pq = new SortedPQ<int *, IntPtrComp>;
+    }
+    else if (pqType == "Binary")
+    {
+        pq = new BinaryPQ<int *, IntPtrComp>;
+    }
+    else if (pqType == "Pairing")
+    {
+        pq = new PairingPQ<int *, IntPtrComp>;
+    }
 
-    if (!pq) {
+    if (!pq)
+    {
         cout << "Invalid pq pointer; did you forget to create it?" << endl;
         return;
     } // if
@@ -109,9 +169,9 @@ void testUpdatePriorities(const string &pqType) {
     delete pq;
 } // testUpdatePriorities()
 
-
 // Very basic testing.
-void testPriorityQueue(Eecs281PQ<int> *pq, const string &pqType) {
+void testPriorityQueue(Eecs281PQ<int> *pq, const string &pqType)
+{
     cout << "Testing priority queue: " << pqType << endl;
 
     pq->push(3);
@@ -130,20 +190,30 @@ void testPriorityQueue(Eecs281PQ<int> *pq, const string &pqType) {
 
     // TODO: Add more testing here!
 
+    pq->push(100);
+    pq->push(21);
+    pq->push(21);
+    pq->push(23);
+    assert(pq->size() == 4);
+    assert(pq->top() == 100);
+    pq->pop();
+    assert(pq->size() == 3);
+    assert(pq->top() == 23);
+
     cout << "testPriorityQueue() succeeded!" << endl;
 } // testPriorityQueue()
-
 
 // Test the pairing heap's range-based constructor, copy constructor,
 // and operator=().
 //
-void testPairing(vector<int> & vec) {
+void testPairing(vector<int> &vec)
+{
     cout << "Testing Pairing Heap separately" << endl;
-    Eecs281PQ<int> * pq1 = new PairingPQ<int>(vec.begin(), vec.end());
-    Eecs281PQ<int> * pq2 = new PairingPQ<int>(*((PairingPQ<int> *)pq1));
+    Eecs281PQ<int> *pq1 = new PairingPQ<int>(vec.begin(), vec.end());
+    Eecs281PQ<int> *pq2 = new PairingPQ<int>(*((PairingPQ<int> *)pq1));
     // This line is different just to show two different ways to declare a
     // pairing heap: as an Eecs281PQ and as a PairingPQ. Yay for inheritance!
-    PairingPQ<int> * pq3 = new PairingPQ<int>();
+    PairingPQ<int> *pq3 = new PairingPQ<int>();
     *pq3 = *((PairingPQ<int> *)pq2);
 
     pq1->push(3);
@@ -165,41 +235,50 @@ void testPairing(vector<int> & vec) {
     cout << "testPairing() succeeded" << endl;
 } // testPairing()
 
-
-int main() {
+int main()
+{
     // Basic pointer, allocate a new PQ later based on user choice.
     Eecs281PQ<int> *pq;
-    vector<string> types{ "Unordered", "Sorted", "Binary", "Pairing" };
+    vector<string> types{"Unordered", "Sorted", "Binary", "Pairing"};
     unsigned int choice;
 
-    cout << "PQ tester" << endl << endl;
+    cout << "PQ tester" << endl
+         << endl;
     for (size_t i = 0; i < types.size(); ++i)
         cout << "  " << i << ") " << types[i] << endl;
     cout << endl;
     cout << "Select one: ";
     cin >> choice;
 
-    if (choice == 0) {
+    if (choice == 0)
+    {
         pq = new UnorderedPQ<int>;
     } // if
-    else if (choice == 1) {
+    else if (choice == 1)
+    {
         pq = new SortedPQ<int>;
     } // else if
-    else if (choice == 2) {
+    else if (choice == 2)
+    {
         pq = new BinaryPQ<int>;
     } // else if
-    else if (choice == 3) {
+    else if (choice == 3)
+    {
         pq = new PairingPQ<int>;
     } // else if
-    else {
-        cout << "Unknown container!" << endl << endl;
+    else
+    {
+        cout << "Unknown container!" << endl
+             << endl;
         exit(1);
     } // else
-   
+
     testPriorityQueue(pq, types[choice]);
     testUpdatePriorities(types[choice]);
+    testHiddenData(types[choice]);
 
-    if (choice == 3) {
+    if (choice == 3)
+    {
         vector<int> vec;
         vec.push_back(0);
         vec.push_back(1);

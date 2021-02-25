@@ -4,6 +4,7 @@
 #define BINARYPQ_H
 
 #include <algorithm>
+#include <utility>
 #include "Eecs281PQ.h"
 
 // A specialized version of the 'heap' ADT implemented as a binary heap.
@@ -18,17 +19,18 @@ public:
     // Runtime: O(1)
     explicit BinaryPQ(COMP_FUNCTOR comp = COMP_FUNCTOR()) : BaseClass{comp}
     {
-        // TODO: Implement this function.
+        data.resize(1);
     } // BinaryPQ
 
     // Description: Construct a heap out of an iterator range with an optional
     //              comparison functor.
     // Runtime: O(n) where n is number of elements in range.
-    // TODO: when you implement this function, uncomment the parameter names.
     template <typename InputIterator>
-    BinaryPQ(InputIterator /*start*/, InputIterator /*end*/, COMP_FUNCTOR comp = COMP_FUNCTOR()) : BaseClass{comp}
+    BinaryPQ(InputIterator start, InputIterator end, COMP_FUNCTOR comp = COMP_FUNCTOR())
+        : BaseClass{comp}, data{start - 1, end}
     {
-        // TODO: Implement this function.
+        updatePriorities();
+
     } // BinaryPQ
 
     // Description: Destructor doesn't need any code, the data vector will
@@ -42,15 +44,20 @@ public:
     // Runtime: O(n)
     virtual void updatePriorities()
     {
-        // TODO: Implement this function.
+        size_t i = 1;
+        while (i <= size())
+        {
+            fixDown(i++);
+        }
+
     } // updatePriorities()
 
     // Description: Add a new element to the heap.
     // Runtime: O(log(n))
-    // TODO: when you implement this function, uncomment the parameter names.
-    virtual void push(const TYPE & /*val*/)
+    virtual void push(const TYPE &val)
     {
-        // TODO: Implement this function.
+        data.push_back(val);
+        fixUp(size());
     } // push()
 
     // Description: Remove the most extreme (defined by 'compare') element from
@@ -61,7 +68,10 @@ public:
     // Runtime: O(log(n))
     virtual void pop()
     {
-        // TODO: Implement this function.
+        data[1] = data.back();
+        data.pop_back();
+        if (!empty())
+            fixDown(1);
     } // pop()
 
     // Description: Return the most extreme (defined by 'compare') element of
@@ -71,30 +81,23 @@ public:
     // Runtime: O(1)
     virtual const TYPE &top() const
     {
-        // TODO: Implement this function.
+        return data[1];
 
-        // These lines are present only so that this provided file compiles.
-        static TYPE temp; // TODO: Delete this line
-        return temp;      // TODO: Delete or change this line
-    }                     // top()
+    } // top()
 
     // Description: Get the number of elements in the heap.
     // Runtime: O(1)
     virtual std::size_t size() const
     {
-        // TODO: Implement this function.  Might be very simple,
-        // depending on your implementation.
-        return 0; // TODO: Delete or change this line
-    }             // size()
+        return data.size() - 1;
+    } // size()
 
     // Description: Return true if the heap is empty.
     // Runtime: O(1)
     virtual bool empty() const
     {
-        // TODO: Implement this function.  Might be very simple,
-        // depending on your implementation.
-        return true; // TODO: Delete or change this line
-    }                // empty()
+        return (data.size() == 1);
+    } // empty()
 
 private:
     // Note: This vector *must* be used your heap implementation.
@@ -102,6 +105,31 @@ private:
 
     // TODO: Add any additional member functions or data you require here.
     // For instance, you might add fixUp() and fixDown().
+
+    void fixUp(size_t k)
+    {
+        while (k > 1 && this->compare(data[k / 2], data[k]))
+        {
+            std::swap(data[k], data[k / 2]);
+            k /= 2;
+        }
+    }
+
+    void fixDown(size_t k)
+    {
+
+        while (2 * k <= size())
+        {
+            size_t j = 2 * k;
+            if (j < size() && this->compare(data[j], data[j + 1]))
+                j++;
+            if (this->compare(data[j], data[k]))
+                break;
+
+            std::swap(data[k], data[j]);
+            k = j;
+        }
+    }
 
 }; // BinaryPQ
 
