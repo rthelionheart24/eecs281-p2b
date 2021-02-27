@@ -223,26 +223,79 @@ void testPairing(vector<int> &vec)
     cout << "Basic tests done." << endl;
     // TODO: Add more code to test addNode(), updateElt(), etc.
 
+    //Test push()
     PairingPQ<int> *pq4 = new PairingPQ<int>();
     assert(pq4->empty());
+    pq4->push(63);
+    assert(pq4->top() == 63);
+    pq4->push(100);
+    assert(pq4->top() == 100);
+    pq4->push(62);
+    assert(pq4->top() == 100);
     pq4->push(81);
-    assert(pq4->top() == 81);
-    pq4->push(37);
-    assert(pq4->top() == 81);
-
-    pq4->updateElt(pq4->addNode(25), 120);
-    pq4->push(18);
-
-    pq4->updatePriorities();
-    assert(pq4->top() == 120);
+    pq4->push(2);
+    pq4->push(10);
+    assert(pq4->top() == 100);
     pq4->pop();
     assert(pq4->top() == 81);
+    pq4->pop();
+    assert(pq4->top() == 63);
+    pq4->pop();
+    assert(pq4->top() == 62);
+    pq4->pop();
+    assert(pq4->top() == 10);
+    pq4->pop();
+    assert(pq4->top() == 2);
+    pq4->pop();
+    assert(pq4->empty());
 
-    cout << "Calling destructors" << endl;
+    //Test Copy ctor
+    PairingPQ<int> *pq5 = new PairingPQ<int>();
+    pq5->push(20);
+    pq5->push(43);
+    pq5->push(6);
+    pq5->push(100);
+    pq5->push(30);
+    pq5->push(0);
+    PairingPQ<int> *pq6 = new PairingPQ<int>(*pq5);
+
+    while (!pq5->empty())
+    {
+        assert(pq5->top() == pq6->top());
+        pq5->pop();
+        pq6->pop();
+    }
+
+    //Test = operator
+    PairingPQ<int> *pq7 = new PairingPQ<int>();
+    pq7->push(20);
+    pq7->push(43);
+    pq7->push(6);
+    pq7->push(100);
+    pq7->push(30);
+    pq7->push(0);
+    PairingPQ<int> *pq8 = new PairingPQ<int>();
+    *pq8 = *pq7;
+
+    while (!pq7->empty())
+    {
+        assert(pq7->top() == pq8->top());
+        pq7->pop();
+        pq8->pop();
+    }
+
+    PairingPQ<int>::Node *n = new PairingPQ<int>::Node(5);
+
+    cout
+        << "Calling destructors" << endl;
     delete pq1;
     delete pq2;
     delete pq3;
     delete pq4;
+    delete pq5;
+    delete pq6;
+    delete pq7;
+    delete pq8;
 
     cout << "testPairing() succeeded" << endl;
 } // testPairing()

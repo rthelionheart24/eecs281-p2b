@@ -78,11 +78,13 @@ public:
         root = nullptr;
 
         std::deque<Node *> to_be_inserted;
+
         to_be_inserted.push_back(other.root);
 
         while (!to_be_inserted.empty())
         {
             Node *next = to_be_inserted.front();
+
             if (next->child)
                 to_be_inserted.push_back(next->child);
             if (next->sibling)
@@ -100,7 +102,7 @@ public:
     PairingPQ &operator=(const PairingPQ &rhs)
     {
         // TODO
-        PairingPQ<TYPE> temp(rhs);
+        PairingPQ temp(rhs);
 
         std::swap(num_nodes, temp.num_nodes);
         std::swap(root, temp.root);
@@ -263,33 +265,46 @@ public:
     void updateElt(Node *node, const TYPE &new_value)
     {
         // TODO
-        node->elt = new_value;
 
         if (node == root)
             return;
 
-        Node *eldest = node->parent->child;
+        node->elt = new_value;
 
-        if (eldest == node)
+        if (this->compare(node->elt, root->elt))
         {
-            node->parent->child = node->sibling;
-            node->parent = nullptr;
-            node->sibling = nullptr;
         }
         else
         {
-            Node *temp = eldest;
-            while (temp->sibling != node)
+            Node *eldest = node->parent->child;
+            //Leftmost
+            if (eldest == node)
             {
-                temp = temp->sibling;
+                node->parent->child = node->sibling;
+                node->parent = nullptr;
+                node->sibling = nullptr;
+            }
+            //Rightmost
+            else if (!node->sibling)
+            {
+                node->parent = nullptr;
+            }
+            //In the middle
+            else
+            {
+                Node *temp = eldest;
+                while (temp->sibling != node)
+                {
+                    temp = temp->sibling;
+                }
+
+                temp->sibling = node->sibling;
+                node->parent = nullptr;
+                node->sibling = nullptr;
             }
 
-            temp->sibling = node->sibling;
-            node->parent = nullptr;
-            node->sibling = nullptr;
+            root = meld(node, root);
         }
-
-        root = meld(node, root);
     } // updateElt()
 
     // Description: Add a new element to the priority_queue. Returns a Node* corresponding
@@ -335,7 +350,7 @@ private:
             r->child = p1;
             return r;
         }
-        else if (this->compare(r->elt, p1->elt))
+        else
         {
             r->parent = p1;
             if (p1->child)
