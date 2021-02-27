@@ -43,13 +43,14 @@ public:
     // Runtime: O(n)
     virtual void updatePriorities()
     {
-        std::size_t i = 0;
-        while (i < size())
+        std::size_t i = size() - 1;
+        while (i > 0)
         {
 
-            fixUp(i);
-            i++;
+            fixDown(i);
+            i--;
         }
+        fixDown(0);
 
     } // updatePriorities()
 
@@ -112,7 +113,7 @@ private:
         while (k > 0 && this->compare(data[(k - 1) / 2], data[k]))
         {
             std::swap(data[(k - 1) / 2], data[k]);
-            k /= 2;
+            k = (k - 1) / 2;
         }
     }
 
@@ -130,14 +131,6 @@ private:
             std::swap(data[k], data[j]);
             k = j;
         }
-    }
-    TYPE &getElement(std::size_t i)
-    {
-        return data[i - 1];
-    }
-    const TYPE &getElement(std::size_t i) const
-    {
-        return data[i - 1];
     }
 
 }; // BinaryPQ

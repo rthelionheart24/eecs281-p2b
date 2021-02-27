@@ -67,7 +67,6 @@ void testHiddenData(const string &pqType)
     // TODO: Add code here to actually test with the HiddenData type.
 
     Eecs281PQ<HiddenData, HiddenDataComp> *pq = nullptr;
-    cout << "Testing HiddenDataComp() on " << pqType << endl;
 
     if (pqType == "Unordered")
     {
@@ -95,7 +94,7 @@ void testHiddenData(const string &pqType)
     assert(pq->size() == 3);
     assert(pq->top().data == 100);
 
-    cout << "HiddenDataComp() succeeded" << endl;
+    cout << "Hidden data test succeeded" << endl;
 
     delete pq;
 
@@ -224,10 +223,26 @@ void testPairing(vector<int> &vec)
     cout << "Basic tests done." << endl;
     // TODO: Add more code to test addNode(), updateElt(), etc.
 
+    PairingPQ<int> *pq4 = new PairingPQ<int>();
+    assert(pq4->empty());
+    pq4->push(81);
+    assert(pq4->top() == 81);
+    pq4->push(37);
+    assert(pq4->top() == 81);
+
+    pq4->updateElt(pq4->addNode(25), 120);
+    pq4->push(18);
+
+    pq4->updatePriorities();
+    assert(pq4->top() == 120);
+    pq4->pop();
+    assert(pq4->top() == 81);
+
     cout << "Calling destructors" << endl;
     delete pq1;
     delete pq2;
     delete pq3;
+    delete pq4;
 
     cout << "testPairing() succeeded" << endl;
 } // testPairing()
