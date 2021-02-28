@@ -284,7 +284,49 @@ void testPairing(vector<int> &vec)
         pq8->pop();
     }
 
-    PairingPQ<int>::Node *n = new PairingPQ<int>::Node(5);
+    //Test updatePriorities()
+    // PairingPQ<int> *pq9 = new PairingPQ<int *>();
+    // vector<int> v = {20, 43, 6, 100, 30, 0};
+
+    // for (size_t i = 0; i < v.size(); i++){
+    //     pq9->push(&v[i]);
+
+    // for (size_t i = 0; i < v.size(); i++)
+    //     v[i] = 100 - v[i];
+
+    // pq9->updatePriorities();
+
+    // assert(*pq9->top() == 100);
+    // pq9->pop();
+    // assert(*pq9->top() == 94);
+    // pq9->pop();
+    // assert(*pq9->top() == 80);
+    // pq9->pop();
+    // assert(*pq9->top() == 70);
+    // pq9->pop();
+    // assert(*pq9->top() == 57);
+    // pq9->pop();
+    // assert(*pq9->top() == 0);
+    // pq9->pop();
+    // assert(pq9->empty());
+    //PairingPQ<int>::Node *n = new PairingPQ<int>::Node(5);
+
+    //Test update_elt
+    PairingPQ<int> *pq10 = new PairingPQ<int>();
+    pq10->push(20);
+    pq10->push(43);
+    pq10->push(6);
+    PairingPQ<int>::Node *n = pq10->addNode(100);
+    pq10->updateElt(n, 200);
+    assert(pq10->top() == 200);
+
+    n = pq10->addNode(30);
+    pq10->updateElt(n, 300);
+    assert(pq10->top() == 300);
+
+    n = pq10->addNode(0);
+    pq10->updateElt(n, 5);
+    assert(pq10->top() == 300);
 
     cout
         << "Calling destructors" << endl;
@@ -296,6 +338,7 @@ void testPairing(vector<int> &vec)
     delete pq6;
     delete pq7;
     delete pq8;
+    delete pq10;
 
     cout << "testPairing() succeeded" << endl;
 } // testPairing()

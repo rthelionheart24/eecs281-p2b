@@ -115,7 +115,7 @@ public:
     ~PairingPQ()
     {
         // TODO
-        if (empty())
+        if (!root)
         {
         }
         else
@@ -146,24 +146,29 @@ public:
     virtual void updatePriorities()
     {
         // TODO
-
-        std::deque<Node *> to_be_updated;
-        to_be_updated.push_back(root);
-
-        while (!to_be_updated.empty())
+        if (!root)
         {
-            Node *next = to_be_updated.front();
-            if (next->child)
-                to_be_updated.push_back(next->child);
-            if (next->sibling)
-                to_be_updated.push_back(next->sibling);
+        }
+        else
+        {
+            std::deque<Node *> to_be_updated;
+            to_be_updated.push_back(root);
 
-            next->parent = nullptr;
-            next->sibling = nullptr;
-            next->child = nullptr;
+            while (!to_be_updated.empty())
+            {
+                Node *next = to_be_updated.front();
+                if (next->child)
+                    to_be_updated.push_back(next->child);
+                if (next->sibling)
+                    to_be_updated.push_back(next->sibling);
 
-            root = meld(next, root);
-            to_be_updated.pop_front();
+                next->parent = nullptr;
+                next->sibling = nullptr;
+                next->child = nullptr;
+
+                root = meld(next, root);
+                to_be_updated.pop_front();
+            }
         }
 
     } // updatePriorities()
@@ -265,13 +270,12 @@ public:
     void updateElt(Node *node, const TYPE &new_value)
     {
         // TODO
+        node->elt = new_value;
 
         if (node == root)
             return;
 
-        node->elt = new_value;
-
-        if (this->compare(node->elt, root->elt))
+        if (this->compare(node->elt, node->parent->elt))
         {
         }
         else
@@ -284,12 +288,7 @@ public:
                 node->parent = nullptr;
                 node->sibling = nullptr;
             }
-            //Rightmost
-            else if (!node->sibling)
-            {
-                node->parent = nullptr;
-            }
-            //In the middle
+            //In the middle or rightmost
             else
             {
                 Node *temp = eldest;
@@ -340,6 +339,9 @@ private:
 
     Node *meld(Node *p1, Node *r)
     {
+        if (p1 == r)
+            return p1;
+
         if (this->compare(p1->elt, r->elt))
         {
             p1->parent = r;
